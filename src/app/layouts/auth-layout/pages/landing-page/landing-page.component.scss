@@ -4,20 +4,18 @@
   // background: #11134d;
 
   .text-s {
-    font-size: min(max(16px, 1vw), 22px);
+    font-size: min(max(18px, 1vw), 24px);
   }
   .c-fonts {
     // font-size: min(max(25px, 2vw), 44px);
-    font-size: 22px;
-    
-    @media (max-width: 999px) {
-      font-size: 16px;
-    }
+    font-size: 32px;
+    font-weight: 600;
   }
 
   .custom-height {
-    background-image: url(/assets/images/landingpage/TranslateTube-Home.jpg);
+    background-image: url(/assets/images/landingpage/Translate.tube-hm-pg.jpg);
     background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
     object-fit: cover;
     // height: calc(100vh - 48px);
@@ -25,12 +23,12 @@
     min-height: 400px;
 
     .banner-text {
-      max-width: 600px;
+      max-width: 790px;
       width: 100%;
-      background-color: #0b0d0ed4;
+      background-color: #ffff;
       border-radius: 5px;
-      padding: 40px;
-      height: 300px;
+      padding: 20px 40px;
+      // height: 300px;
     }
 
     @media (max-width: 600px) {
