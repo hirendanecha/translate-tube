@@ -14,13 +14,13 @@
 
   .custom-height {
     background-image: url(/assets/images/landingpage/Translate.tube-hm-pg.jpg);
-    background-size: cover;
-    background-position: center;
+    background-size: 100% 100%;
+    background-position: center center;
     background-repeat: no-repeat;
     object-fit: cover;
-    // height: calc(100vh - 48px);
-    height: 115vh;
-    min-height: 400px;
+    height: calc(100vh - 48px);
+    // height: 115vh;
+    // min-height: 400px;
 
     .banner-text {
       max-width: 790px;
@@ -31,8 +31,11 @@
       // height: 300px;
     }
 
-    @media (max-width: 600px) {
-      min-height: 300px;
+    @media (max-width: 900px) {
+      background-image: url(/assets/images/Translate.tube-mobile.png);
+      .banner-text {
+        display: none;
+      }
     }
   }
   .sub-container {
