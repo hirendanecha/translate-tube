@@ -54,20 +54,22 @@ export class HeaderComponent {
     private socketService: SocketService
   ) {
     this.originalFavicon = document.querySelector('link[rel="icon"]');
-    this.socketService.socket.on('isReadNotification_ack', (data) => {
-      if (data?.profileId) {
+    if(this.tokenService.getToken()) {
+      this.socketService.socket.on('isReadNotification_ack', (data) => {
+        if (data?.profileId) {
+          this.sharedService.isNotify = false;
+          localStorage.setItem('isRead', data?.isRead);
+          this.originalFavicon.href = '/assets/images/default-profile.jpg';
+        }
+      });
+      const isRead = localStorage.getItem('isRead');
+      if (isRead === 'N') {
+        this.sharedService.isNotify = true;
+      } else {
         this.sharedService.isNotify = false;
-        localStorage.setItem('isRead', data?.isRead);
-        this.originalFavicon.href = '/assets/images/default-profile.jpg';
       }
-    });
-    const isRead = localStorage.getItem('isRead');
-    if (isRead === 'N') {
-      this.sharedService.isNotify = true;
-    } else {
-      this.sharedService.isNotify = false;
+      this.channelId = +localStorage.getItem('channelId');
     }
-    this.channelId = +localStorage.getItem('channelId');
   }
 
   openProfileMenuModal(): void {
