@@ -11,5 +11,7 @@ export const environment = {
   socketUrl: `${url}/`,
   webUrl: webUrl,
   tubeUrl: tubeUrl,
-  domain: '.translate.tube'
+  domain: '.translate.tube',
+  siteKey: '0x4AAAAAAAUwBojCBa1YQfJt',
+  secretKey: '0x4AAAAAAAUwBhIek0zdK4eShLRfbRAOAUQ',
 };
