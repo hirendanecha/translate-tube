@@ -114,7 +114,7 @@
             formControlName="Country"  (change)="onCountryChange($event)">
             <option [value]="defaultCountry">United states</option>
             <option [value]="item.country_code" *ngFor="let item of allCountryData">
-              {{ item.country }}
+              {{item.country}}
             </option>
           </select>
         </div>
