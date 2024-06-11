@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.loadCloudFlareWidget();
+    // this.loadCloudFlareWidget();
   }
 
   loadCloudFlareWidget() {
@@ -105,7 +105,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.spinner.show();
-    // const token = localStorage.getItem('captcha-token');
+    const token = localStorage.getItem('captcha-token');
     // if (!token) {
     //   this.spinner.hide();
     //   this.msg = 'Invalid captcha kindly try again!';
