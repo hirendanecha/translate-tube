@@ -19,6 +19,8 @@ export class MainLayoutComponent {
     isShowLeftSideBar: true,
     isShowRightSideBar: true,
     isShowResearchLeftSideBar: false,
+    isShowChatModule: false,
+
   };
 
   constructor(
