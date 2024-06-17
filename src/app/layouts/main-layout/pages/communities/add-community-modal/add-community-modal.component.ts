@@ -219,7 +219,7 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
           },
           error: (err) => {
             this.toastService.danger(
-              'Please change your name. this Translator name already in use.'
+              'Please change Translator. this Translator name already in use.'
             );
             this.spinner.hide();
           },
