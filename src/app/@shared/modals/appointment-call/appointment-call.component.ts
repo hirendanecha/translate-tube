@@ -25,7 +25,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     private sanitizer: DomSanitizer,
     private router: Router,
     private socketService: SocketService,
-    private speechRecognitionService: SpeechRecognitionService,
+    private speechRecognitionService: SpeechRecognitionService
   ) {}
 
   ngOnInit(): void {
@@ -75,10 +75,14 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       this.socketService?.connect();
     }
     console.log(this.appointmentURLCall);
-    this.socketService?.socket?.emit('join', this.appointmentURLCall);
+    const room = this.appointmentURLCall.toString();
+    this.socketService?.socket.emit('join', {
+      room: this.appointmentURLCall.toString(),
+    });
+    console.log(this.socketService?.socket);
     this.configureSpeechRecognition();
     this.socketService.socket?.on('translations', (res) => {
-    let timeoutId: any;
+      let timeoutId: any;
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
@@ -86,7 +90,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       console.log(this.transcriptText);
       timeoutId = setTimeout(() => {
         this.transcriptText = '';
-      }, 1500);
+      }, 2000);
       console.log(res);
     });
   }
