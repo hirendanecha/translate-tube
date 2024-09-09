@@ -24,6 +24,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   appointmentURLCall: string;
   languages = LANGUAGES;
   selectedLanguage: string = 'en-US';
+  showTranslation: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -72,20 +73,22 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       console.log(event);
     });
 
+    //make title mode enabled default
+    api.on(`videoConferenceJoined`, () => {
+      const listener = ({ enabled }) => {
+        api.removeEventListener(`tileViewChanged`, listener);
+        if (!enabled) {
+          api.executeCommand(`toggleTileView`);
+        }
+      };
+      api.on(`tileViewChanged`, listener);
+      api.executeCommand(`toggleTileView`);
+    });
+
     api.on('readyToClose', () => {
       this.speechRecognitionService.stop();
       this.router.navigate(['/home']).then(() => {});
     });
-    // api.addToolbarButton(
-    //   'translationButton',
-    //   'Translate',
-    //   () => {
-    //     this.onTranslate();
-    //   },
-    //   'custom-translate-button',
-    //   'Click to translate',
-    //   true
-    // );
   }
 
   ngAfterViewInit(): void {
@@ -159,5 +162,9 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
   selectLanguage(event): void {
     this.selectedLanguage = event.target.value;
+  }
+
+  toggleTranslation(){
+    this.showTranslation = !this.showTranslation
   }
 }

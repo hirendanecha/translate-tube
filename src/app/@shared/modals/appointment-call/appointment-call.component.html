@@ -1,14 +1,24 @@
-<div class="bg-black position-relative">
-  <h4 class="text-white position-absolute transcript-text">
-    {{ transcriptText }}
-  </h4>
-  <div class="translate-options position-absolute">
-    <select id="language-select" (change)="selectLanguage($event)">
-      <option selected disabled>Select Language</option>
-      <option *ngFor="let language of languages" [value]="language.code">
-        {{ language.name }}
-      </option>
-    </select>
-  </div>
-  <div id="meet" class="iframe-model"></div>
+<div class="bg-black appoinment-call-container position-relative">
+  <button class="transcript-btn position-absolute" [ngClass]="{'active':showTranslation}"
+    (click)="toggleTranslation()" title="Turn on translation"></button>
+  <div id="meet" [ngClass]="!showTranslation ? 'iframe-model' : 'iframe-model-converted'"></div>
+
+  <ng-template [ngIf]="showTranslation">
+    <div class="mx-5 mt-2">
+      <div class="translate-options">
+        <select id="language-select" (change)="selectLanguage($event)">
+          <option selected disabled>Select Language</option>
+          <option *ngFor="let language of languages" [value]="language.code">
+            {{ language.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="border mt-2 p-3 h-100-px">
+        <h4 class="text-white">
+          {{ transcriptText }}
+        </h4>
+      </div>
+    </div>
+  </ng-template>
 </div>

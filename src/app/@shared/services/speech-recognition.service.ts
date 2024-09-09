@@ -11,23 +11,25 @@ export class SpeechRecognitionService {
 
   constructor() {
     const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    this.recognition = new SpeechRecognition();
-    this.recognition.continuous = true;
-    this.recognition.interimResults = true;
-
-    this.recognition.onerror = async (event: any) => {
-      console.error('Speech recognition error:', event.error);
-      if (this.isListening && !this.isRestarting) {
-        await this.restart();
-      }
-    };
-
-    this.recognition.onend = async () => {
-      if (this.isListening && !this.isRestarting) {
-        await this.restart();
-      }
-    };
-    this.setLanguage(navigator.language || this.language);
+    if (SpeechRecognition) {
+      this.recognition = new SpeechRecognition();
+      this.recognition.continuous = true;
+      this.recognition.interimResults = true;
+  
+      this.recognition.onerror = async (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        if (this.isListening && !this.isRestarting) {
+          await this.restart();
+        }
+      };
+  
+      this.recognition.onend = async () => {
+        if (this.isListening && !this.isRestarting) {
+          await this.restart();
+        }
+      };
+      this.setLanguage(navigator.language || this.language);
+    }
   }
 
   start() {

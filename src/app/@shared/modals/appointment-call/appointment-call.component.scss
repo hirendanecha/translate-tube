@@ -1,17 +1,46 @@
-.iframe-model {
-  height: calc(92vh - 4px);
-}
-.transcript-text {
-  bottom: calc(0% + 100px);
-  right: 45%;
-}
-.translate-options {
-  bottom: 20%;
-  left: 2%;
-  select {
-    width: 220px;
-    option {
-      color: unset;
+.appoinment-call-container {
+  height: calc(100vh - 72px);
+
+  .iframe-model {
+    height: calc(92vh - 4px);
+  }
+
+  .iframe-model-converted {
+    height: calc(70vh - 4px);
+  }
+
+  .translate-options {
+    select {
+      width: 220px;
+      option {
+        color: unset;
+      }
+    }
+  }
+
+  .transcript-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-image: url("/assets/images/translate-button.png");
+    background-size: cover;
+    background-position: center;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    left: 10px;
+    top: 10px;
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &.active {
+      opacity: 0.8;
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 }
