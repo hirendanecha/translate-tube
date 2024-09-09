@@ -114,7 +114,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       console.log(this.transcriptText);
       timeoutId = setTimeout(() => {
         this.transcriptText = '';
-      }, 2000);
+      }, 5000);
     });
     this.socketService.socket.on('user-language', (res) => {
       this.selectedUserLanguage = res.lang;
