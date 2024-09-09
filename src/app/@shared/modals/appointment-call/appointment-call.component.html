@@ -2,5 +2,13 @@
   <h4 class="text-white position-absolute transcript-text">
     {{ transcriptText }}
   </h4>
+  <div class="translate-options position-absolute">
+    <select id="language-select" (change)="selectLanguage($event)">
+      <option selected disabled>Select Language</option>
+      <option *ngFor="let language of languages" [value]="language.code">
+        {{ language.name }}
+      </option>
+    </select>
+  </div>
   <div id="meet" class="iframe-model"></div>
 </div>

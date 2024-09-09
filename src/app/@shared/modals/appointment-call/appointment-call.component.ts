@@ -3,6 +3,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpeechRecognitionService } from '../../services/speech-recognition.service';
 import { SocketService } from '../../services/socket.service';
+import { GoogleAuthService } from '../../services/translate.service';
+import { HttpClient } from '@angular/common/http';
+import { LANGUAGES } from '../../constant/language';
 
 declare var JitsiMeetExternalAPI: any;
 
@@ -19,13 +22,17 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   transcriptionLog: any[] = [];
   transcriptText: string = '';
   appointmentURLCall: string;
+  languages = LANGUAGES;
+  selectedLanguage: string = 'en-US';
 
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private router: Router,
     private socketService: SocketService,
-    private speechRecognitionService: SpeechRecognitionService
+    private speechRecognitionService: SpeechRecognitionService,
+    private googleAuthService: GoogleAuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +60,17 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     const api = new JitsiMeetExternalAPI(this.domain, this.options);
     this.speechRecognitionService.start();
     // this.speechRecognitionService.setLanguage(navigator.language || 'en-US');
+
+    api.on('audioMuteStatusChanged', (event) => {
+      if (!event.muted) {
+        this.speechRecognitionService.start();
+      } else {
+        this.speechRecognitionService.stop();
+      }
+    });
+    api.on('participantJoined', (event) => {
+      console.log(event);
+    });
 
     api.on('readyToClose', () => {
       this.speechRecognitionService.stop();
@@ -86,12 +104,13 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      this.transcriptText = res?.data[0]?.translatedText;
+      console.log(res);
+      this.translate(res.translatedText, this.selectedLanguage);
+      // this.transcriptText = res?.data[0]?.translatedText;
       console.log(this.transcriptText);
       timeoutId = setTimeout(() => {
         this.transcriptText = '';
       }, 2000);
-      console.log(res);
     });
   }
 
@@ -111,5 +130,34 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
         console.log(data);
       });
     };
+  }
+
+  translate(textToTranslate: string, targetLanguage: string) {
+    this.googleAuthService
+      .signIn()
+      .then((accessToken) => {
+        const body = {
+          q: textToTranslate,
+          target: targetLanguage,
+        };
+
+        const headers = {
+          Authorization: `Bearer ${accessToken}`,
+        };
+
+        this.googleAuthService.translate(body, headers).subscribe({
+          next: (response: any) => {
+            this.transcriptText = response.data.translations[0].translatedText;
+          },
+          error: (error) => {
+            console.error('Translation error:', error);
+          },
+        });
+      })
+      .catch((err) => console.error('Authentication error:', err));
+  }
+
+  selectLanguage(event): void {
+    this.selectedLanguage = event.target.value;
   }
 }

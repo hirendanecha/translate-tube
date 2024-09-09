@@ -49,6 +49,7 @@ export function app(): express.Express {
   global['jwplayer'] = window.jwplayer;
   // global.google = google;
   global['getComputedStyle'] = window.getComputedStyle;
+  global['webkitSpeechRecognition'] = window.webkitSpeechRecognition;
 
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/main/modules/express-engine)
   server.engine(

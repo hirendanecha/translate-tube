@@ -1,7 +1,17 @@
 .iframe-model {
   height: calc(92vh - 4px);
 }
-.transcript-text{
+.transcript-text {
   bottom: calc(0% + 100px);
   right: 45%;
+}
+.translate-options {
+  bottom: 20%;
+  left: 2%;
+  select {
+    width: 220px;
+    option {
+      color: unset;
+    }
+  }
 }
