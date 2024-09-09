@@ -24,6 +24,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   appointmentURLCall: string;
   languages = LANGUAGES;
   selectedLanguage: string;
+  selectedUserLanguage: string;
   showTranslation: boolean = false;
 
   constructor(
@@ -116,7 +117,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       }, 2000);
     });
     this.socketService.socket.on('user-language', (res) => {
-      this.selectedLanguage = res.lang;
+      this.selectedUserLanguage = res.lang;
     });
   }
 
@@ -129,7 +130,10 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       const reqObj = {
         callId: this.appointmentURLCall,
         translateText: currentTranscript,
-        translateLanguage: this.selectedLanguage || navigator.language,
+        translateLanguage:
+          this.selectedUserLanguage ||
+          this.selectedLanguage ||
+          navigator.language,
       };
       console.log(currentTranscript);
       this.socketService.translationSocketService(reqObj, (data) => {
@@ -167,7 +171,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     this.selectedLanguage = event.target.value;
     const data = {
       callId: this.appointmentURLCall,
-      lang: this.selectedLanguage,
+      lang: this.selectedUserLanguage || this.selectedLanguage,
     };
     this.socketService.changeTranslateLanguage(data);
   }
