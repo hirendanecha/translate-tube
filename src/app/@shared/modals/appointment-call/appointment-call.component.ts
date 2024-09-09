@@ -23,7 +23,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   transcriptText: string = '';
   appointmentURLCall: string;
   languages = LANGUAGES;
-  selectedLanguage: string = 'en-US';
+  selectedLanguage: string;
   showTranslation: boolean = false;
 
   constructor(
@@ -108,12 +108,15 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
         clearTimeout(timeoutId);
       }
       console.log(res);
-      this.translate(res.translatedText, this.selectedLanguage);
-      // this.transcriptText = res?.data[0]?.translatedText;
+      // this.translate(res.translatedText, this.selectedLanguage);
+      this.transcriptText = res?.data[0]?.translatedText;
       console.log(this.transcriptText);
       timeoutId = setTimeout(() => {
         this.transcriptText = '';
       }, 2000);
+    });
+    this.socketService.socket.on('user-language', (res) => {
+      this.selectedLanguage = res.lang;
     });
   }
 
@@ -126,7 +129,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       const reqObj = {
         callId: this.appointmentURLCall,
         translateText: currentTranscript,
-        translateLanguage: 'en-US',
+        translateLanguage: this.selectedLanguage || navigator.language,
       };
       console.log(currentTranscript);
       this.socketService.translationSocketService(reqObj, (data) => {
@@ -162,9 +165,14 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
   selectLanguage(event): void {
     this.selectedLanguage = event.target.value;
+    const data = {
+      callId: this.appointmentURLCall,
+      lang: this.selectedLanguage,
+    };
+    this.socketService.changeTranslateLanguage(data);
   }
 
-  toggleTranslation(){
-    this.showTranslation = !this.showTranslation
+  toggleTranslation() {
+    this.showTranslation = !this.showTranslation;
   }
 }

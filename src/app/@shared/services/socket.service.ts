@@ -9,9 +9,7 @@ import { environment } from 'src/environments/environment';
 export class SocketService {
   public socket: any;
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('auth-token');
       if (token) {
@@ -70,7 +68,6 @@ export class SocketService {
       this.socket?.connect();
       this.socket?.emit('create-new-post', params);
     }
-
   }
 
   editPost(params, callback: (post: any) => void) {
@@ -109,12 +106,16 @@ export class SocketService {
   commentOnPost(params, callback: (data: any) => void) {
     this.socket?.emit('comments-on-post', params, callback);
   }
-  
+
   readNotification(params, callback: (data: any) => void) {
     this.socket?.emit('isReadNotification', params, callback);
   }
 
   translationSocketService(params, callback: (data: any) => void) {
     this.socket?.emit('text-translation', params, callback);
+  }
+
+  changeTranslateLanguage(params) {
+    this.socket?.emit('change-language', params);
   }
 }

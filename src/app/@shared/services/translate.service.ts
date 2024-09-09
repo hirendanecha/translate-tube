@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 declare const gapi: any;
 
@@ -8,8 +9,8 @@ declare const gapi: any;
   providedIn: 'root',
 })
 export class GoogleAuthService {
-  private clientId = '116706381724602797735.apps.googleusercontent.com'; // Replace with your OAuth Client ID
-  public apiKey = 'AIzaSyAJb02qsvIN1AFpQm-e4tFvI5iVrJ6-FWQ'; // Replace with your API key
+  private clientId = environment.clientId; // Replace with your OAuth Client ID
+  public apiKey = environment.apiKey; // Replace with your API key
   private discoveryDocs = [
     'https://www.googleapis.com/discovery/v1/apis/translate/v2/rest',
   ];
