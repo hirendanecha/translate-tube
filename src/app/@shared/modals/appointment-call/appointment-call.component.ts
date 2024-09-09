@@ -71,7 +71,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       }
     });
     api.on('participantJoined', (event) => {
-      console.log(event);
+      console.log('participantJoined', event);
     });
 
     //make title mode enabled default
@@ -130,7 +130,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       const reqObj = {
         callId: this.appointmentURLCall,
         translateText: currentTranscript,
-        translateLanguage: this.selectedUserLanguage,
+        translateLanguage: this.selectedUserLanguage || navigator.language || 'en-US',
       };
       console.log(currentTranscript);
       this.socketService.translationSocketService(reqObj, (data) => {
