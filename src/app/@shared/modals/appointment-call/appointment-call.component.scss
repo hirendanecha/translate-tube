@@ -3,10 +3,19 @@
 
   .iframe-model {
     height: calc(92vh - 4px);
+
+    @media (max-width:500px) {
+      height: calc(86vh - 4px);
+    }
   }
 
   .iframe-model-converted {
     height: calc(70vh - 4px);
+
+    
+    @media (max-width:500px) {
+      height: calc(65vh - 10px);
+    }
   }
 
   .translate-options {
