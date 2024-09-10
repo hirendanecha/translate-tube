@@ -26,7 +26,6 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   selectedLanguage: string;
   selectedUserLanguage: string;
   showTranslation: boolean = false;
-  isAudioMuted: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -64,8 +63,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     // this.speechRecognitionService.setLanguage(navigator.language || 'en-US');
 
     api.on('audioMuteStatusChanged', (event) => {
-      this.isAudioMuted = event.muted;
-      if (!event.muted && this.showTranslation) {
+      if (!event.muted) {
         this.speechRecognitionService.start();
       } else {
         this.speechRecognitionService.stop();
@@ -176,10 +174,5 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
   toggleTranslation() {
     this.showTranslation = !this.showTranslation;
-    if (this.showTranslation && !this.isAudioMuted) {
-      this.speechRecognitionService.start();
-    } else{
-      this.speechRecognitionService.stop();
-    }
   }
 }
