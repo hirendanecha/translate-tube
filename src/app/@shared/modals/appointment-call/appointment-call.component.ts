@@ -26,6 +26,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   selectedLanguage: string;
   selectedUserLanguage: string;
   showTranslation: boolean = false;
+  isAudioMuted: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -60,11 +61,11 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     };
 
     const api = new JitsiMeetExternalAPI(this.domain, this.options);
-    this.speechRecognitionService.start();
     // this.speechRecognitionService.setLanguage(navigator.language || 'en-US');
 
     api.on('audioMuteStatusChanged', (event) => {
-      if (!event.muted) {
+      this.isAudioMuted = event.muted;
+      if (!event.muted && this.showTranslation) {
         this.speechRecognitionService.start();
       } else {
         this.speechRecognitionService.stop();
@@ -175,5 +176,10 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
   toggleTranslation() {
     this.showTranslation = !this.showTranslation;
+    if (this.showTranslation && !this.isAudioMuted) {
+      this.speechRecognitionService.start();
+    } else{
+      this.speechRecognitionService.stop();
+    }
   }
 }
