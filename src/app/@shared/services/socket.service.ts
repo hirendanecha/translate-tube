@@ -111,8 +111,8 @@ export class SocketService {
     this.socket?.emit('isReadNotification', params, callback);
   }
 
-  translationSocketService(params, callback: (data: any) => void) {
-    this.socket?.emit('text-translation', params, callback);
+  translationSocketService(params) {
+    this.socket?.emit('text-translation', params);
   }
 
   changeTranslateLanguage(params) {

@@ -15,6 +15,6 @@ export const environment = {
   domain: '.translate.tube',
   siteKey: '0x4AAAAAAAUwBojCBa1YQfJt',
   secretKey: '0x4AAAAAAAUwBhIek0zdK4eShLRfbRAOAUQ',
-  clientId: '116706381724602797735.apps.googleusercontent.com',
+  clientId: '533856566302-bja5i42nu0vtlhp6qppodmd9nnlidg5n.apps.googleusercontent.com',
   apiKey: 'AIzaSyAJb02qsvIN1AFpQm-e4tFvI5iVrJ6-FWQ',
 };

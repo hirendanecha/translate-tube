@@ -6,6 +6,8 @@ import { SocketService } from '../../services/socket.service';
 import { GoogleAuthService } from '../../services/translate.service';
 import { HttpClient } from '@angular/common/http';
 import { LANGUAGES } from '../../constant/language';
+import axios from 'axios';
+import { environment } from 'src/environments/environment';
 
 declare var JitsiMeetExternalAPI: any;
 
@@ -23,8 +25,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   transcriptText: string = '';
   appointmentURLCall: string;
   languages = LANGUAGES;
-  selectedLanguage: string;
-  selectedUserLanguage: string;
+  selectedLanguage: string = 'en-US';
   showTranslation: boolean = false;
 
   constructor(
@@ -98,7 +99,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     }
     console.log(this.appointmentURLCall);
     const room = this.appointmentURLCall.toString();
-    this.socketService?.socket.emit('join', {
+    this.socketService?.socket?.emit('join', {
       room: this.appointmentURLCall.toString(),
     });
     console.log(this.socketService?.socket);
@@ -109,15 +110,11 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
         clearTimeout(timeoutId);
       }
       console.log(res);
-      // this.translate(res.translatedText, this.selectedLanguage);
-      this.transcriptText = res?.data[0]?.translatedText;
+      this.translate(res?.translatedText, this.selectedLanguage);
       console.log(this.transcriptText);
       timeoutId = setTimeout(() => {
         this.transcriptText = '';
       }, 5000);
-    });
-    this.socketService.socket.on('user-language', (res) => {
-      this.selectedUserLanguage = res.lang;
     });
   }
 
@@ -130,38 +127,42 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       const reqObj = {
         callId: this.appointmentURLCall,
         translateText: currentTranscript,
-        translateLanguage: this.selectedUserLanguage || navigator.language || 'en-US',
       };
-      console.log(currentTranscript);
-      this.socketService.translationSocketService(reqObj, (data) => {
-        console.log(data);
-      });
+      this.socketService.translationSocketService(reqObj);
     };
   }
 
   translate(textToTranslate: string, targetLanguage: string) {
-    this.googleAuthService
-      .signIn()
-      .then((accessToken) => {
-        const body = {
-          q: textToTranslate,
+    // const body = {
+    //   q: textToTranslate,
+    //   target: targetLanguage || 'fr',
+    // };
+    // this.googleAuthService.translate(body).subscribe({
+    //   next: (response: any) => {
+    //     this.transcriptText = response.data.translations[0].translatedText;
+    //   },
+    //   error: (error) => {
+    //     console.error('Translation error:', error);
+    //   },
+    // });
+
+    return axios
+      .post(
+        `https://translation.googleapis.com/language/translate/v2?key=${environment.apiKey}`,
+        {
+          q: [textToTranslate],
           target: targetLanguage,
-        };
-
-        const headers = {
-          Authorization: `Bearer ${accessToken}`,
-        };
-
-        this.googleAuthService.translate(body, headers).subscribe({
-          next: (response: any) => {
-            this.transcriptText = response.data.translations[0].translatedText;
-          },
-          error: (error) => {
-            console.error('Translation error:', error);
-          },
-        });
+        }
+      )
+      .then((response) => {
+        console.log(response.data.data.translations[0].translatedText);
+        return (this.transcriptText =
+          response.data.data.translations[0].translatedText);
       })
-      .catch((err) => console.error('Authentication error:', err));
+      .catch((error) => {
+        console.error('Error:', error);
+        throw error;
+      });
   }
 
   selectLanguage(event): void {
