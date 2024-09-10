@@ -167,11 +167,6 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
   selectLanguage(event): void {
     this.selectedLanguage = event.target.value;
-    const data = {
-      callId: this.appointmentURLCall,
-      lang: this.selectedLanguage,
-    };
-    this.socketService.changeTranslateLanguage(data);
   }
 
   toggleTranslation() {
