@@ -61,15 +61,18 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     };
 
     const api = new JitsiMeetExternalAPI(this.domain, this.options);
-    this.speechRecognitionService.start();
+    // this.speechRecognitionService.start();
     // this.speechRecognitionService.setLanguage(navigator.language || 'en-US');
     api.on('audioMuteStatusChanged', (event) => {
       if (!event.muted) {
+        this.speechRecognitionService.isMuted = false;
         this.speechRecognitionService.start();
       } else {
-        this.speechRecognitionService.stop();
+        this.speechRecognitionService.isMuted = true;
+        this.speechRecognitionService.mediaRecorder.stop();
       }
     });
+
     api.on('participantJoined', (event) => {
       console.log('participantJoined', event);
     });
