@@ -63,7 +63,6 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     const api = new JitsiMeetExternalAPI(this.domain, this.options);
     this.speechRecognitionService.start();
     // this.speechRecognitionService.setLanguage(navigator.language || 'en-US');
-
     api.on('audioMuteStatusChanged', (event) => {
       if (!event.muted) {
         this.speechRecognitionService.start();
@@ -119,17 +118,33 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   }
 
   configureSpeechRecognition() {
-    this.speechRecognitionService.recognition.onresult = (event: any) => {
-      const transcripts = Array.from(event.results).map(
-        (result: any) => result[0].transcript
-      );
-      const currentTranscript = transcripts[transcripts.length - 1];
-      const reqObj = {
-        callId: this.appointmentURLCall,
-        translateText: currentTranscript,
-      };
-      this.socketService.translationSocketService(reqObj);
-    };
+    // this.speechRecognitionService.recognition.onresult = (event: any) => {
+    //   const currentTranscript = Array.from(event.results).map((result: any) => result[0].transcript).join('');
+    //   const transcripts = Array.from(event.results).map(
+    //     (result: any) => result[0].transcript
+    //   );
+    //   // const currentTranscript = transcripts[transcripts.length - 1];
+    //   const reqObj = {
+    //     callId: this.appointmentURLCall,
+    //     translateText: currentTranscript,
+    //   };
+    //   this.socketService.translationSocketService(reqObj);
+    // };
+    // this.speechRecognitionService.transcriptedText.subscribe(
+    //   transcript => {
+    //   },)
+    this.speechRecognitionService.transcriptedText$.subscribe(
+      (transcripts: string) => {
+        const reqObj = {
+          callId: this.appointmentURLCall,
+          translateText: transcripts,
+        };
+        this.socketService.translationSocketService(reqObj);
+      },
+      (error) => {
+        console.error('Error:', error);
+      }
+    );
   }
 
   translate(textToTranslate: string, targetLanguage: string) {
