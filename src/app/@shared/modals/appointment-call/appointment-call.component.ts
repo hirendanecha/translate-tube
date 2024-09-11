@@ -91,6 +91,9 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
     api.on('readyToClose', () => {
       this.speechRecognitionService.stop();
+      if (this.speechRecognitionService.stream) {
+        this.speechRecognitionService.stream.getTracks().forEach((track) => track.stop());
+      }
       this.router.navigate(['/home']).then(() => {});
     });
   }
@@ -107,16 +110,18 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     console.log(this.socketService?.socket);
     this.configureSpeechRecognition();
     this.socketService.socket?.on('translations', (res) => {
-      let timeoutId: any;
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (res?.translatedText) {
+        let timeoutId: any;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        console.log(res);
+        this.translate(res?.translatedText, this.selectedLanguage);
+        console.log(this.transcriptText);
+        timeoutId = setTimeout(() => {
+          this.transcriptText = '';
+        }, 15000);
       }
-      console.log(res);
-      this.translate(res?.translatedText, this.selectedLanguage);
-      console.log(this.transcriptText);
-      timeoutId = setTimeout(() => {
-        this.transcriptText = '';
-      }, 5000);
     });
   }
 

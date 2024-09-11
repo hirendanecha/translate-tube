@@ -196,7 +196,7 @@ import { environment } from 'src/environments/environment';
 export class SpeechRecognitionService {
   public mediaRecorder: MediaRecorder | null = null;
   private audioChunks: Blob[] = [];
-  private stream: MediaStream | null = null;
+  public stream: MediaStream | null = null;
   private transcriptedTextSubject = new BehaviorSubject<string>('');
   transcriptedText$: Observable<string> =
     this.transcriptedTextSubject.asObservable();
