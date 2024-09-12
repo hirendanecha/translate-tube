@@ -61,16 +61,18 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     };
 
     const api = new JitsiMeetExternalAPI(this.domain, this.options);
-    this.speechRecognitionService.start();
+    // this.speechRecognitionService.start();
     // this.speechRecognitionService.setLanguage(navigator.language || 'en-US');
-
     api.on('audioMuteStatusChanged', (event) => {
       if (!event.muted) {
+        this.speechRecognitionService.isMuted = false;
         this.speechRecognitionService.start();
       } else {
-        this.speechRecognitionService.stop();
+        this.speechRecognitionService.isMuted = true;
+        this.speechRecognitionService.mediaRecorder.stop();
       }
     });
+
     api.on('participantJoined', (event) => {
       console.log('participantJoined', event);
     });
@@ -89,6 +91,9 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
     api.on('readyToClose', () => {
       this.speechRecognitionService.stop();
+      if (this.speechRecognitionService.stream) {
+        this.speechRecognitionService.stream.getTracks().forEach((track) => track.stop());
+      }
       this.router.navigate(['/home']).then(() => {});
     });
   }
@@ -105,31 +110,49 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     console.log(this.socketService?.socket);
     this.configureSpeechRecognition();
     this.socketService.socket?.on('translations', (res) => {
-      let timeoutId: any;
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (res?.translatedText) {
+        let timeoutId: any;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        console.log(res);
+        this.translate(res?.translatedText, this.selectedLanguage);
+        console.log(this.transcriptText);
+        timeoutId = setTimeout(() => {
+          this.transcriptText = '';
+        }, 15000);
       }
-      console.log(res);
-      this.translate(res?.translatedText, this.selectedLanguage);
-      console.log(this.transcriptText);
-      timeoutId = setTimeout(() => {
-        this.transcriptText = '';
-      }, 5000);
     });
   }
 
   configureSpeechRecognition() {
-    this.speechRecognitionService.recognition.onresult = (event: any) => {
-      const transcripts = Array.from(event.results).map(
-        (result: any) => result[0].transcript
-      );
-      const currentTranscript = transcripts[transcripts.length - 1];
-      const reqObj = {
-        callId: this.appointmentURLCall,
-        translateText: currentTranscript,
-      };
-      this.socketService.translationSocketService(reqObj);
-    };
+    // this.speechRecognitionService.recognition.onresult = (event: any) => {
+    //   const currentTranscript = Array.from(event.results).map((result: any) => result[0].transcript).join('');
+    //   const transcripts = Array.from(event.results).map(
+    //     (result: any) => result[0].transcript
+    //   );
+    //   // const currentTranscript = transcripts[transcripts.length - 1];
+    //   const reqObj = {
+    //     callId: this.appointmentURLCall,
+    //     translateText: currentTranscript,
+    //   };
+    //   this.socketService.translationSocketService(reqObj);
+    // };
+    // this.speechRecognitionService.transcriptedText.subscribe(
+    //   transcript => {
+    //   },)
+    this.speechRecognitionService.transcriptedText$.subscribe(
+      (transcripts: string) => {
+        const reqObj = {
+          callId: this.appointmentURLCall,
+          translateText: transcripts,
+        };
+        this.socketService.translationSocketService(reqObj);
+      },
+      (error) => {
+        console.error('Error:', error);
+      }
+    );
   }
 
   translate(textToTranslate: string, targetLanguage: string) {
