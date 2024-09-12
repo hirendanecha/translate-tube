@@ -170,11 +170,11 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // formData['emphasis'] = this.selectedValues;
   onSubmit() {
     if (!this.data.Id) {
       this.spinner.show();
       const formData = this.communityForm.value;
-      formData['emphasis'] = this.selectedValues;
       formData['areas'] = this.selectedAreaValues;
       if (this.communityForm.valid) {
         this.communityService.createCommunity(formData).subscribe({

@@ -109,6 +109,7 @@ import { HealthPraatitionerCardComponent } from './components/health-partitioner
 import { EditPostModalComponent } from './modals/edit-post-modal/edit-post-modal.component';
 import { AppointmentCallComponent } from './modals/appointment-call/appointment-call.component';
 import { ConferenceLinkComponent } from './modals/create-conference-link/conference-link-modal.component';
+import { AppointmentModalComponent } from './modals/appointment-modal/appointment-modal.component';
 
 
 const sharedComponents = [
@@ -136,6 +137,7 @@ const sharedComponents = [
   HealthPraatitionerCardComponent,
   EditPostModalComponent,
   AppointmentCallComponent,
+  AppointmentModalComponent,
   ConferenceLinkComponent  
 ];
 
