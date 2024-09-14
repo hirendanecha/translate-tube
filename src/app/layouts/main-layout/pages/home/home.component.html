@@ -29,7 +29,7 @@
         </div>
 
         <div *ngIf="tokenService.getCredentials()">
-          <ng-container *ngIf="communityDetails?.adminIds.includes(+profileId)">
+          <ng-container *ngIf="communityDetails?.adminIds?.includes(+profileId)">
             <button
               class="btn btn-sm btn-primary me-2"
               (click)="editCommunity(communityDetails)"
@@ -37,7 +37,7 @@
               Edit
               {{
                 communityDetails?.pageType === "community"
-                  ? "Translator Details"
+                  ? "Translator"
                   : "page"
               }}
             </button>
@@ -69,7 +69,7 @@
                   Leave
                   {{
                     communityDetails?.pageType === "community"
-                      ? "Translator Details"
+                      ? "Translator"
                       : "page"
                   }}
                 </button>
@@ -85,7 +85,7 @@
                 Join
                 {{
                   communityDetails?.pageType === "community"
-                    ? "Translator Details"
+                    ? "Translator"
                     : "page"
                 }}
               </button>
@@ -500,7 +500,7 @@
           *ngIf="
             communityDetails.profileId != member.profileId &&
             profileId != member.profileId &&
-            communityDetails?.adminIds.includes(+profileId)
+            communityDetails?.adminIds?.includes(+profileId)
           "
         >
           <div ngbDropdown>
@@ -514,7 +514,7 @@
                   (click)="createCommunityAdmin(member)"
                 >
                   <fa-icon [icon]="['fas', 'user-check']" />
-                  <span>Make {{ this.communityDetails.pageType === "community" ? "Translator Details" : "page" }} member</span>
+                  <span>Make {{ this.communityDetails.pageType === "community" ? "Translator" : "page" }} member</span>
                 </a>
               </button>
               <button ngbDropdownItem *ngIf="member?.isAdmin === 'N'">
@@ -523,7 +523,7 @@
                   (click)="createCommunityAdmin(member)"
                 >
                   <fa-icon [icon]="['fas', 'user-check']" />
-                  <span>Make {{ this.communityDetails.pageType === "community" ? "Translator Details" : "page" }} admin</span>
+                  <span>Make {{ this.communityDetails.pageType === "community" ? "Translator" : "page" }} admin</span>
                 </a>
               </button>
               <button ngbDropdownItem>
@@ -571,7 +571,7 @@
         Delete
         {{
           communityDetails?.pageType === "community"
-            ? "Translator Details"
+            ? "Translator"
             : "page"
         }}
       </button>
@@ -582,7 +582,7 @@
         (click)="removeFromCommunity()"
       >
         Leave {{ communityDetails?.pageType === "community"
-        ? "Translator Details"
+        ? "Translator"
         : "page" }}
       </button>
     </ng-container>
@@ -590,7 +590,7 @@
 </ng-container>
 
 <ng-container *ngIf="activeCommunityTab === 3">
-  <ng-container *ngIf="appointmentList.length; else noData">
+  <ng-container *ngIf="appointmentList?.length; else noData">
     <div class="card rounded shadow border-0 appointment-table">
       <div class="card-body rounded">
         <h5 class="m-0">Appointment Details</h5>

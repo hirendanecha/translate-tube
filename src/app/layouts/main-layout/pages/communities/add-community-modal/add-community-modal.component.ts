@@ -361,6 +361,11 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
   onAreaboxChange(event: any, area: any): void {
     const isChecked = event.target.checked;
     if (isChecked) {
+      if (this.selectedAreaValues.length >= 10) {
+        this.toastService.danger('You can only select up to 10 languages at a time.');
+        event.target.checked = false;
+        return;
+      }
       this.selectedAreaValues.push(area.aId);
     } else {
       this.selectedAreaValues = this.selectedAreaValues.filter(

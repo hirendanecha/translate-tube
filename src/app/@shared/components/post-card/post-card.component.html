@@ -91,9 +91,19 @@
                 onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
                 alt="avatar"
               />
-              <p class="cursor mt-2">
-                {{ (post?.Username || post?.FirstName)?.split(" ")?.join("") }}
-              </p>
+              <div class="d-flex gap-3 align-items-baseline">
+                <a class="h6 cursor mt-2" [href]="webUrl + 'settings/view-profile/' + post.profileid" target="_blank">
+                  {{ (post?.Username || post?.FirstName)?.split(" ")?.join("") }}
+                </a> 
+                <button>
+                  <a
+                    class="droplist d-flex align-items-center gap-2"
+                    [appCopyClipboard]="post.Username"
+                  >
+                    <fa-icon [icon]="['fas', 'copy']" />
+                  </a>
+                </button>
+              </div>
               <div
                 class="d-flex"
                 *ngIf="

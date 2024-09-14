@@ -15,7 +15,6 @@ export class NotificationsComponent {
   notificationList: any[] = [];
   activePage = 1;
   hasMoreData = false;
-
   constructor(
     private customerService: CustomerService,
     private spinner: NgxSpinnerService,
@@ -23,7 +22,7 @@ export class NotificationsComponent {
     private toastService: ToastService,
     private seoService: SeoService,
     private socketService: SocketService
-  ) { 
+  ) {
     const data = {
       title: 'Translate.Tube Notification',
       url: `${window.location.href}`,
@@ -31,8 +30,7 @@ export class NotificationsComponent {
     };
     this.seoService.updateSeoMetaData(data);
     const profileId = +localStorage.getItem('profileId');
-    this.socketService.readNotification({ profileId }, (data) => {}); 
-
+    this.socketService.readNotification({ profileId }, (data) => {});
   }
 
   ngOnInit(): void {
@@ -71,17 +69,18 @@ export class NotificationsComponent {
         this.toastService.success(
           res.message || 'Notification delete successfully'
         );
+        this.notificationList = [];
         this.getNotificationList();
       },
     });
   }
 
-  readUnreadNotification(id, isRead): void {
-    this.customerService.readUnreadNotification(id, isRead).subscribe({
+  readUnreadNotification(notification, isRead): void {
+    this.customerService.readUnreadNotification(notification.id, isRead).subscribe({
       next: (res) => {
-        this.toastService.success(res.message); 
-        this.getNotificationList();
-      },    
+        this.toastService.success(res.message);
+        notification.isRead = isRead;
+      },
     });
   }
   loadMoreNotification(): void {
