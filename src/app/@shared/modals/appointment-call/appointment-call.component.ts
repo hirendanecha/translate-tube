@@ -3,11 +3,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpeechRecognitionService } from '../../services/speech-recognition.service';
 import { SocketService } from '../../services/socket.service';
-import { GoogleAuthService } from '../../services/translate.service';
-import { HttpClient } from '@angular/common/http';
+import { TranslationService } from '../../services/translate.service';
 import { LANGUAGES } from '../../constant/language';
-import axios from 'axios';
-import { environment } from 'src/environments/environment';
 
 declare var JitsiMeetExternalAPI: any;
 
@@ -34,8 +31,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     private router: Router,
     private socketService: SocketService,
     private speechRecognitionService: SpeechRecognitionService,
-    private googleAuthService: GoogleAuthService,
-    private http: HttpClient
+    private translationService: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -69,11 +65,11 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
         this.speechRecognitionService.mute();
       }
     });
-    
+
     api.on('participantJoined', (event) => {
       console.log('participantJoined', event);
     });
-    
+
     //make title mode enabled default
     api.on(`videoConferenceJoined`, () => {
       this.speechRecognitionService.start();
@@ -97,25 +93,16 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     if (this.socketService?.socket && !this.socketService?.socket?.connected) {
       this.socketService?.connect();
     }
-    console.log(this.appointmentURLCall);
-    const room = this.appointmentURLCall.toString();
+    // console.log(this.appointmentURLCall);
     this.socketService?.socket?.emit('join', {
       room: this.appointmentURLCall.toString(),
     });
-    console.log(this.socketService?.socket);
+    // console.log(this.socketService?.socket);
     this.configureSpeechRecognition();
     this.socketService.socket?.on('translations', (res) => {
       if (res?.translatedText) {
-        let timeoutId: any;
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
         console.log(res);
-        this.translate(res?.translatedText, this.selectedLanguage);
-        console.log(this.transcriptText);
-        timeoutId = setTimeout(() => {
-          this.transcriptText = '';
-        }, 15000);
+        this.translateText(res?.translatedText, this.selectedLanguage);
       }
     });
   }
@@ -150,36 +137,21 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     );
   }
 
-  translate(textToTranslate: string, targetLanguage: string) {
-    // const body = {
-    //   q: textToTranslate,
-    //   target: targetLanguage || 'fr',
-    // };
-    // this.googleAuthService.translate(body).subscribe({
-    //   next: (response: any) => {
-    //     this.transcriptText = response.data.translations[0].translatedText;
-    //   },
-    //   error: (error) => {
-    //     console.error('Translation error:', error);
-    //   },
-    // });
-
-    return axios
-      .post(
-        `https://translation.googleapis.com/language/translate/v2?key=${environment.apiKey}`,
-        {
-          q: [textToTranslate],
-          target: targetLanguage,
+  translateText(textToTranslate: string, targetLanguage: string) {
+    let timeoutId: any;
+    this.translationService
+      .translate(textToTranslate, targetLanguage)
+      .then((res: any) => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
         }
-      )
-      .then((response) => {
-        console.log(response.data.data.translations[0].translatedText);
-        return (this.transcriptText =
-          response.data.data.translations[0].translatedText);
+        this.transcriptText = res.data.data.translations[0].translatedText;
+        timeoutId = setTimeout(() => {
+          this.transcriptText = '';
+        }, 15000);
       })
       .catch((error) => {
-        console.error('Error:', error);
-        throw error;
+        console.error('Translation error:', error);
       });
   }
 
