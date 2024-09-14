@@ -61,24 +61,22 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     };
 
     const api = new JitsiMeetExternalAPI(this.domain, this.options);
-    // this.speechRecognitionService.start();
     // this.speechRecognitionService.setLanguage(navigator.language || 'en-US');
     api.on('audioMuteStatusChanged', (event) => {
       if (!event.muted) {
-        this.speechRecognitionService.isMuted = false;
-        this.speechRecognitionService.start();
+        this.speechRecognitionService.unmute();
       } else {
-        this.speechRecognitionService.isMuted = true;
-        this.speechRecognitionService.mediaRecorder.stop();
+        this.speechRecognitionService.mute();
       }
     });
-
+    
     api.on('participantJoined', (event) => {
       console.log('participantJoined', event);
     });
-
+    
     //make title mode enabled default
     api.on(`videoConferenceJoined`, () => {
+      this.speechRecognitionService.start();
       const listener = ({ enabled }) => {
         api.removeEventListener(`tileViewChanged`, listener);
         if (!enabled) {
@@ -91,9 +89,6 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
     api.on('readyToClose', () => {
       this.speechRecognitionService.stop();
-      if (this.speechRecognitionService.stream) {
-        this.speechRecognitionService.stream.getTracks().forEach((track) => track.stop());
-      }
       this.router.navigate(['/home']).then(() => {});
     });
   }

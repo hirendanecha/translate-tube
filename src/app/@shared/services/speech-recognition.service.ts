@@ -194,13 +194,15 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class SpeechRecognitionService {
-  public mediaRecorder: MediaRecorder | null = null;
+  private mediaRecorder: MediaRecorder | null = null;
   private audioChunks: Blob[] = [];
   public stream: MediaStream | null = null;
   private transcriptedTextSubject = new BehaviorSubject<string>('');
   transcriptedText$: Observable<string> =
     this.transcriptedTextSubject.asObservable();
   isMuted = false;
+  private restartTimeout: any;
+  private restartDelayTimeout: any;
 
   constructor() {}
 
@@ -228,20 +230,39 @@ export class SpeechRecognitionService {
     } catch (err) {
       console.error('Error accessing microphone:', err);
     }
-    setTimeout(() => {
-      this.stop();
+    this.restartTimeout = setTimeout(() => {
+      this.restart();
     }, 3000);
   }
 
-  stop() {
+  restart() {
     if (this.mediaRecorder) {
       this.mediaRecorder.stop();
       if (!this.isMuted) {
-        setTimeout(() => {
+        this.restartDelayTimeout = setTimeout(() => {
           this.start();
         }, 200);
       }
     }
+  }
+
+  stop() {
+    clearTimeout(this.restartTimeout);
+    clearTimeout(this.restartDelayTimeout);
+    if (this.mediaRecorder || this.stream) {
+      this.mediaRecorder.stop();
+      this.stream.getTracks().forEach((track) => track.stop());
+    }
+  }
+
+  mute() {
+    this.isMuted = true;
+    this.restart();
+  }
+
+  unmute() {
+    this.isMuted = false;
+    this.start();
   }
 
   private async getTranscription(audioBlob: Blob): Promise<string> {
