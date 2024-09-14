@@ -247,9 +247,10 @@ export class SpeechRecognitionService {
   }
 
   stop() {
-    clearTimeout(this.restartTimeout);
-    clearTimeout(this.restartDelayTimeout);
     if (this.mediaRecorder || this.stream) {
+      clearTimeout(this.restartTimeout);
+      clearTimeout(this.restartDelayTimeout);
+      this.isMuted = true;
       this.mediaRecorder.stop();
       this.stream.getTracks().forEach((track) => track.stop());
     }
@@ -262,7 +263,8 @@ export class SpeechRecognitionService {
 
   unmute() {
     this.isMuted = false;
-    this.start();
+    this.mediaRecorder.start();
+    this.restart();
   }
 
   private async getTranscription(audioBlob: Blob): Promise<string> {
