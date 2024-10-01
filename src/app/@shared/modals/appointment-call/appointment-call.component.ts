@@ -24,7 +24,8 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
   languages = LANGUAGES;
   selectedLanguage: string = 'en-US';
   showTranslation: boolean = false;
-
+  participantName: string = '';
+  speakingPersonName: string = '';
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
@@ -66,12 +67,9 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
       }
     });
 
-    api.on('participantJoined', (event) => {
-      console.log('participantJoined', event);
-    });
-
     //make title mode enabled default
-    api.on(`videoConferenceJoined`, () => {
+    api.on(`videoConferenceJoined`, (event) => {
+      this.participantName = event?.displayName;
       this.speechRecognitionService.start();
       const listener = ({ enabled }) => {
         api.removeEventListener(`tileViewChanged`, listener);
@@ -102,6 +100,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
     this.socketService.socket?.on('translations', (res) => {
       if (res?.translatedText) {
         console.log(res);
+        this.speakingPersonName = res?.participantName;
         this.translateText(res?.translatedText, this.selectedLanguage);
       }
     });
@@ -128,6 +127,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
         const reqObj = {
           callId: this.appointmentURLCall,
           translateText: transcripts,
+          participantName: this.participantName,
         };
         this.socketService.translationSocketService(reqObj);
       },
@@ -148,6 +148,7 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
         this.transcriptText = res.data.data.translations[0].translatedText;
         timeoutId = setTimeout(() => {
           this.transcriptText = '';
+          this.speakingPersonName = '';
         }, 15000);
       })
       .catch((error) => {
