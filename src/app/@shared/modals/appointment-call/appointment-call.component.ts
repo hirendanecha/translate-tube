@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpeechRecognitionService } from '../../services/speech-recognition.service';
@@ -13,7 +13,7 @@ declare var JitsiMeetExternalAPI: any;
   templateUrl: './appointment-call.component.html',
   styleUrls: ['./appointment-call.component.scss'],
 })
-export class AppointmentCallComponent implements OnInit, AfterViewInit {
+export class AppointmentCallComponent implements OnInit, AfterViewInit, OnDestroy {
   appointmentCall: SafeResourceUrl;
   domain: string = 'meet.facetime.tube';
   options: any;
@@ -162,5 +162,9 @@ export class AppointmentCallComponent implements OnInit, AfterViewInit {
 
   toggleTranslation() {
     this.showTranslation = !this.showTranslation;
+  }
+
+  ngOnDestroy(): void {
+    this.speechRecognitionService.stop();
   }
 }
